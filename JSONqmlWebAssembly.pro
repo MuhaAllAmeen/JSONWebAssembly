@@ -1,6 +1,7 @@
 QT = core
 QT += qml
 QT += gui
+QT +=widgets
 
 
 CONFIG += c++17 cmdline
