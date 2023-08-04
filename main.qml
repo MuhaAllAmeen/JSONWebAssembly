@@ -4,7 +4,7 @@ import QtQuick.Window
 
 
 Window {
-    width: 500; height: 500
+    width: 1000; height: 1000
     visible: true
     Component.onCompleted: {
         var JsonString = '{"User1":{"sunday":3,"monday":2,"tuesday":5,"wednesday":7,"thursday":2,"friday":5,"saturday":9},"User2":{"sunday":5,"monday":1,"tuesday":4,"wednesday":8,"thursday":3,"friday":2,"saturday":6}}';
@@ -58,7 +58,7 @@ Window {
                 id: columnNumbers
                 height: parent.height
                 anchors.fill: parent
-                spacing:20
+                spacing:40
                 rotation: 180
                 clip: true
                 Repeater{
@@ -80,7 +80,7 @@ Window {
             width: 20; height: 20; color: "red"; radius:20
             NumberAnimation on x {
                 function whichPage(){
-                    if (listView.delegate==barChartDelegate2){
+                    if (listView.delegate===barChartDelegate2){
                         return toggleBtn.width/2
                     }
                     else{
@@ -98,7 +98,7 @@ Window {
             anchors.fill: parent
             onClicked: {
                 toggleAnimation.running = true
-                listView.delegate==barChartDelegate2 ? listView.delegate=lineChartDelegate : listView.delegate = barChartDelegate2
+                listView.delegate===barChartDelegate2 ? listView.delegate=lineChartDelegate : listView.delegate = barChartDelegate2
 
             }
         }
@@ -108,7 +108,7 @@ Window {
     Component{
         id: barChartDelegate2
         Row{
-            spacing: 5
+            spacing: 10
             height: parent.height
             Text{
                 text: model.Users
@@ -121,7 +121,7 @@ Window {
                 delegate: Rectangle{
                     id:dayBarRect
                     anchors.bottom: parent.bottom
-                    width: 20; height: (parent.height/columnNumbers.spacing)* day; color:dayColor
+                    width: 30; height: ((day/columnNumbers.spacing)* parent.height)*3.4 ; color:dayColor
                     Text{
                         anchors.centerIn: parent
                         text: day
@@ -158,6 +158,8 @@ Window {
             anchors{bottom: parent.bottom;}
 //            anchors.fill: parent
             color: "transparent"
+
+//            x: ListView.view ? ListView.view.currentItem.x : 0
             Text{
                 anchors {top:parent.top; topMargin: 20; horizontalCenter: parent.horizontalCenter }
                 text: Users
@@ -252,25 +254,25 @@ Window {
         anchors.centerIn: parent
 
         Row{
-            spacing: 7
+            spacing: (7/70)*parent.width
             width: parent.width; height:parent.height;
-            anchors{top: mainAreaRect.bottom; topMargin:5; left:mainAreaRect.left; right:mainAreaRect.right}
+            anchors{top: mainAreaRect.bottom; topMargin:5; horizontalCenter: parent.horizontalCenter}
             ObjectModel { /*["red","blue","green","yellow","grey","violet","lightblue"]*/
                     id: itemModel
-                    Rectangle { height: 30; width: 50; color: "red"; radius:5
+                    Rectangle { height: 30; width: 70; color: "red"; radius:5
                         Text{anchors.centerIn: parent; text:"Sunday"; font.pixelSize:10}
                     }
-                    Rectangle { height: 30; width: 50; color: "blue"; radius:5
+                    Rectangle { height: 30; width: 70; color: "blue"; radius:5
                     Text{anchors.centerIn: parent; text:"Monday"; font.pixelSize:10}}
-                    Rectangle { height: 30; width: 50; color: "green"; radius:5
+                    Rectangle { height: 30; width: 70; color: "green"; radius:5
                     Text{anchors.centerIn: parent; text:"Tuesday"; font.pixelSize:10}}
-                    Rectangle { height: 30; width: 60; color: "yellow"; radius:5
+                    Rectangle { height: 30; width: 70; color: "yellow"; radius:5
                     Text{anchors.centerIn: parent; text:"Wednesday"; font.pixelSize:10}}
-                    Rectangle { height: 30; width: 50; color: "grey"; radius:5
+                    Rectangle { height: 30; width: 70; color: "grey"; radius:5
                     Text{anchors.centerIn: parent; text:"Thursday"; font.pixelSize:10}}
-                    Rectangle { height: 30; width: 50; color: "violet"; radius:5
+                    Rectangle { height: 30; width: 70; color: "violet"; radius:5
                     Text{anchors.centerIn: parent; text:"Friday"; font.pixelSize:10}}
-                    Rectangle { height: 30; width: 50; color: "lightblue"; radius:5
+                    Rectangle { height: 30; width: 70; color: "lightblue"; radius:5
                     Text{anchors.centerIn: parent; text:"Saturday"; font.pixelSize:10}}
                 }
             Repeater{
@@ -286,6 +288,35 @@ Window {
             radius: 5
             width: parent.width; height: parent.height
             color:"black"
+            Row{
+                anchors{top: parent.top; topMargin: 10; left: parent.left; leftMargin: 10}
+                width:100; height:100; spacing: 5;
+            Repeater{
+                width: parent.width; height: parent.height;
+                model: dataModel
+                delegate:
+                    Rectangle{
+                        id: userSelectRect
+                        width: 60; height: 30; color: userNameMouse.pressed ? "red" : "white" ; radius:5
+                        Text{
+                            id: userTextfromBtn
+                        anchors.centerIn: parent
+                        text: Users
+                        }
+                        MouseArea{
+                            id: userNameMouse
+                            anchors.fill: parent
+                            onClicked: {
+                                    if(userTextfromBtn.text==dataModel.get(index).Users){
+                                        console.log("got")
+                                        listView.currentIndex=index
+                                    }
+                                 }
+                        }
+                }
+                }
+            }
+
             ListModel{
                 id:dataModel
             }
@@ -293,13 +324,18 @@ Window {
             ListView{
                 id:listView
                 clip: true
-                anchors {left: parent.left; leftMargin: 10; right: parent.right; }
-                width: parent.width; height: parent.height
+                anchors {/*left: parent.left; leftMargin: 10;*/ bottom: parent.bottom; horizontalCenter: parent.horizontalCenter/*right: parent.right;*/ }
+                width: 600/*contentWidth/count*/; height: parent.height - 100
                 orientation: ListView.Horizontal
-                spacing:parent.width/10
+                spacing:parent.width/count
                 model: dataModel /*sampleModel*/
+//                currentIndex: 1
+//                highlightFollowsCurrentItem: true
+                focus: true
+//                highlight: lineChartDelegate
                 Component.onCompleted: {
-                    console.log(dataModel.count)
+                    console.log("currentItem",listView.currentItem)
+//                    console.log("contentwidth", ListView.view.contentWidth/ListView.view.count)
                 }
 
                 delegate: barChartDelegate2
