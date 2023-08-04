@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>ToggleBtn.qml</file>
+        <file>NumbersArea.qml</file>
+        <file>ColorLabels.qml</file>
     </qresource>
 </RCC>

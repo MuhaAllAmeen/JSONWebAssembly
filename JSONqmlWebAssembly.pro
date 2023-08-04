@@ -22,4 +22,7 @@ RESOURCES += \
     qml.qrc
 
 DISTFILES += \
+    ColorLabels.qml \
+    NumbersArea.qml \
+    ToggleBtn.qml \
     main.qml

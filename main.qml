@@ -7,42 +7,37 @@ Window {
     width: 1000; height: 1000
     visible: true
     Component.onCompleted: {
-        var JsonString = '{"User1":{"sunday":3,"monday":2,"tuesday":5,"wednesday":7,"thursday":2,"friday":5,"saturday":9},"User2":{"sunday":5,"monday":1,"tuesday":4,"wednesday":8,"thursday":3,"friday":2,"saturday":6}}';
-                var JsonObject= JSON.parse(JsonString);
-                var hours = 0
-                var i = 0
-                //retrieve values from JSON again
-                var aString = JsonObject.User1;
-                var bString = JsonObject.User2;
-                for (var userNames in JsonObject){
-                    dataModel.append({"Users":userNames,"dayModel":[]})
+        var JsonString = '{"User1":{"sunday":3,"monday":2,"tuesday":5,"wednesday":6,"thursday":2,"friday":5,"saturday":9},"User2":{"sunday":5,"monday":1,"tuesday":4,"wednesday":8,"thursday":3,"friday":2,"saturday":6},"User3":{"sunday":2,"monday":5,"tuesday":2,"wednesday":1,"thursday":6,"friday":7,"saturday":3}}';
+        var JsonObject= JSON.parse(JsonString);
+        var hours = 0
+        var i = 0
+        //retrieve values from JSON again
+        for (var userNames in JsonObject){
+            dataModel.append({"Users":userNames,"dayModel":[]})
 
-//                    sampleModel.append({"Users":userNames,"sunday":0,"monday":0,"tuesday":0,"wednesday":0,"thursday":0,"friday":0,"saturday":0,"hours":0})
 
-                    for (var days in JsonObject[userNames]){
-                        var day = days
-                        var value = JsonObject[userNames][day]
-                        var newAdd = {}
-                        newAdd[day]=value
-//                        sampleModel.get(i).dayModel.append(newAdd)
-                        dataModel.get(i).dayModel.append({"day":value,"dayColor":"red","number":0})
+            for (var days in JsonObject[userNames]){
+                var day = days
+                var value = JsonObject[userNames][day]
+                var newAdd = {}
+                newAdd[day]=value
+                dataModel.get(i).dayModel.append({"day":value,"dayColor":"red","number":0})
 
-//                        sampleModel.set(i,newAdd)
-                            hours = hours+JsonObject[userNames][days]
-                    }
-                    dataModel.set(i,{"hours":hours})
-                    i=i+1
-                    console.log("hours",hours)
-                    hours= 0
-                }
-                var dayColors = ["red","blue","green","yellow","grey","violet","lightblue"]
-                for (var j=0; j<dayColors.length;j++){
-                    for (var k=0; k<dataModel.count; k++){
-                        dataModel.get(k).dayModel.set(j,{"dayColor":dayColors[j],"number":j})
-                    }
-                }
+                hours = hours+JsonObject[userNames][days]
+            }
+            dataModel.set(i,{"hours":hours})
+            i=i+1
+            console.log("hours",hours)
+            hours= 0
+        }
+        var dayColors = ["red","blue","green","yellow","grey","violet","lightblue"]
+        for (var j=0; j<dayColors.length;j++){
+            for (var k=0; k<dataModel.count; k++){
+                dataModel.get(k).dayModel.set(j,{"dayColor":dayColors[j],"number":j})
+            }
+        }
 
-                console.log(dataModel.get(0).dayModel.get(0).dayColor)
+        console.log(dataModel.get(0).dayModel.get(0).dayColor)
     }
 
 
@@ -71,38 +66,7 @@ Window {
             }
         }
     }
-    Rectangle{
-        id: toggleBtn
-        width: 40; height:20; color:"darkred"
-        radius:10
-        anchors {top: parent.top; topMargin: 20; horizontalCenter: parent.horizontalCenter}
-        Rectangle{
-            width: 20; height: 20; color: "red"; radius:20
-            NumberAnimation on x {
-                function whichPage(){
-                    if (listView.delegate===barChartDelegate2){
-                        return toggleBtn.width/2
-                    }
-                    else{
-                        return 0
-                    }
-                }
-                id: toggleAnimation
-                to: whichPage()
-                easing.type: Easing.InBack
-                duration: 200; running: false
-            }
 
-        }
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                toggleAnimation.running = true
-                listView.delegate===barChartDelegate2 ? listView.delegate=lineChartDelegate : listView.delegate = barChartDelegate2
-
-            }
-        }
-    }
 
 
     Component{
@@ -150,16 +114,15 @@ Window {
         }
 
     }
+    ToggleBtn{}
 
     Component{
         id:lineChartDelegate
         Rectangle {
             height: 600; width:600
             anchors{bottom: parent.bottom;}
-//            anchors.fill: parent
             color: "transparent"
 
-//            x: ListView.view ? ListView.view.currentItem.x : 0
             Text{
                 anchors {top:parent.top; topMargin: 20; horizontalCenter: parent.horizontalCenter }
                 text: Users
@@ -169,7 +132,6 @@ Window {
                 id: graphCanvas
                 height: parent.height; width:parent.width
 
-    //            anchors.fill: parent
                 property bool graphDrawn: false
 
                 onPaint: {drawGraph()}
@@ -194,7 +156,7 @@ Window {
 
                     // Set up the starting point for drawing the graph
                     var startX = 0;
-                    var startY = 0 /*canvasHeight - (user1Data[Object.keys(user1Data)[0]] / maxValue) * canvasHeight;*/
+                    var startY = 0
 
                     ctx.strokeStyle = dayModel.get(index).dayColor;
                     ctx.lineWidth = 2;
@@ -203,11 +165,10 @@ Window {
                     var dayList=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
                     // Draw the graph and labels
                     for (var i = 0; i < dayModel.count; i++) {
-//                        var day = dataModel.get(0).Users
                         var value = dayModel.get(i).day
 
                         var x = startX + spacing-1;
-                        var y = canvasHeight - (value / maxValue) * canvasHeight+20;
+                        var y = (canvasHeight - (value / maxValue) * canvasHeight)+20;
 
                         // Draw line segment
                         ctx.lineTo(x, y);
@@ -218,8 +179,8 @@ Window {
                         ctx.fillStyle = "white";
                         ctx.textAlign = "center";
                         ctx.fillText(value.toString(), x, y - 10);
-//                        ctx.fillRect(x-5, y-5, 10, 10);
-//                        ctx.roundedRect(x-2,y-3,5,5,2,2)
+                        //                        ctx.fillRect(x-5, y-5, 10, 10);
+                        //                        ctx.roundedRect(x-2,y-3,5,5,2,2)
                         ctx.fillText(dayList[i],x-spacing/1.5,y-10)
 
                         startX = x;
@@ -239,11 +200,7 @@ Window {
 
     }
 
-    Loader{
-        id: loader
-        active: true
-//        sourceComponent:
-    }
+
 
 
 
@@ -253,35 +210,7 @@ Window {
         width: parent.width-100; height: parent.height-100
         anchors.centerIn: parent
 
-        Row{
-            spacing: (7/70)*parent.width
-            width: parent.width; height:parent.height;
-            anchors{top: mainAreaRect.bottom; topMargin:5; horizontalCenter: parent.horizontalCenter}
-            ObjectModel { /*["red","blue","green","yellow","grey","violet","lightblue"]*/
-                    id: itemModel
-                    Rectangle { height: 30; width: 70; color: "red"; radius:5
-                        Text{anchors.centerIn: parent; text:"Sunday"; font.pixelSize:10}
-                    }
-                    Rectangle { height: 30; width: 70; color: "blue"; radius:5
-                    Text{anchors.centerIn: parent; text:"Monday"; font.pixelSize:10}}
-                    Rectangle { height: 30; width: 70; color: "green"; radius:5
-                    Text{anchors.centerIn: parent; text:"Tuesday"; font.pixelSize:10}}
-                    Rectangle { height: 30; width: 70; color: "yellow"; radius:5
-                    Text{anchors.centerIn: parent; text:"Wednesday"; font.pixelSize:10}}
-                    Rectangle { height: 30; width: 70; color: "grey"; radius:5
-                    Text{anchors.centerIn: parent; text:"Thursday"; font.pixelSize:10}}
-                    Rectangle { height: 30; width: 70; color: "violet"; radius:5
-                    Text{anchors.centerIn: parent; text:"Friday"; font.pixelSize:10}}
-                    Rectangle { height: 30; width: 70; color: "lightblue"; radius:5
-                    Text{anchors.centerIn: parent; text:"Saturday"; font.pixelSize:10}}
-                }
-            Repeater{
-                model: itemModel
-
-            }
-
-
-        }
+        ColorLabels{}
 
         Rectangle{
             id: mainAreaRect
@@ -291,29 +220,29 @@ Window {
             Row{
                 anchors{top: parent.top; topMargin: 10; left: parent.left; leftMargin: 10}
                 width:100; height:100; spacing: 5;
-            Repeater{
-                width: parent.width; height: parent.height;
-                model: dataModel
-                delegate:
-                    Rectangle{
+                Repeater{
+                    width: parent.width; height: parent.height;
+                    model: dataModel
+                    delegate:
+                        Rectangle{
                         id: userSelectRect
                         width: 60; height: 30; color: userNameMouse.pressed ? "red" : "white" ; radius:5
                         Text{
                             id: userTextfromBtn
-                        anchors.centerIn: parent
-                        text: Users
+                            anchors.centerIn: parent
+                            text: Users
                         }
                         MouseArea{
                             id: userNameMouse
                             anchors.fill: parent
                             onClicked: {
-                                    if(userTextfromBtn.text==dataModel.get(index).Users){
-                                        console.log("got")
-                                        listView.currentIndex=index
-                                    }
-                                 }
+                                if(userTextfromBtn.text==dataModel.get(index).Users){
+                                    console.log("got")
+                                    listView.currentIndex=index
+                                }
+                            }
                         }
-                }
+                    }
                 }
             }
 
@@ -324,18 +253,16 @@ Window {
             ListView{
                 id:listView
                 clip: true
-                anchors {/*left: parent.left; leftMargin: 10;*/ bottom: parent.bottom; horizontalCenter: parent.horizontalCenter/*right: parent.right;*/ }
-                width: 600/*contentWidth/count*/; height: parent.height - 100
+                anchors {bottom: parent.bottom; horizontalCenter: parent.horizontalCenter}
+                width: 600; height: parent.height - 100
                 orientation: ListView.Horizontal
                 spacing:parent.width/count
-                model: dataModel /*sampleModel*/
-//                currentIndex: 1
-//                highlightFollowsCurrentItem: true
+                model: dataModel
+                //                currentIndex: 1
+                //                highlightFollowsCurrentItem: true
                 focus: true
-//                highlight: lineChartDelegate
                 Component.onCompleted: {
                     console.log("currentItem",listView.currentItem)
-//                    console.log("contentwidth", ListView.view.contentWidth/ListView.view.count)
                 }
 
                 delegate: barChartDelegate2
