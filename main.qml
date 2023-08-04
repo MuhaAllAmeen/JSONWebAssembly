@@ -71,6 +71,38 @@ Window {
             }
         }
     }
+    Rectangle{
+        id: toggleBtn
+        width: 40; height:20; color:"darkred"
+        radius:10
+        anchors {top: parent.top; topMargin: 20; horizontalCenter: parent.horizontalCenter}
+        Rectangle{
+            width: 20; height: 20; color: "red"; radius:20
+            NumberAnimation on x {
+                function whichPage(){
+                    if (listView.delegate==barChartDelegate2){
+                        return toggleBtn.width/2
+                    }
+                    else{
+                        return 0
+                    }
+                }
+                id: toggleAnimation
+                to: whichPage()
+                easing.type: Easing.InBack
+                duration: 200; running: false
+            }
+
+        }
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                toggleAnimation.running = true
+                listView.delegate==barChartDelegate2 ? listView.delegate=lineChartDelegate : listView.delegate = barChartDelegate2
+
+            }
+        }
+    }
 
 
     Component{
@@ -121,38 +153,79 @@ Window {
 
     Component{
         id:lineChartDelegate
-        Column{
-            spacing: 0
-            height: parent.height
-            rotation: 180
-            Repeater{
-                model: dayModel
-                height: parent.height
-//                anchors.bottom: parent.bottom
+        Rectangle {
+            height: 600; width:600
+            anchors{bottom: parent.bottom;}
+//            anchors.fill: parent
+            color: "transparent"
+            Text{
+                anchors {top:parent.top; topMargin: 20; horizontalCenter: parent.horizontalCenter }
+                text: Users
+                color: "white"
+            }
+            Canvas {
+                id: graphCanvas
+                height: parent.height; width:parent.width
 
-                delegate: Rectangle{
-//                    anchors.bottom: parent.bottom
-                    function xValue(){
-                        console.log(index)
-                        return dayModel.get(index).number*2
+    //            anchors.fill: parent
+                property bool graphDrawn: false
+
+                onPaint: {drawGraph()}
+
+
+                function drawGraph() {
+                    var ctx = getContext("2d");
+                    var maxValue = 0;
+
+
+                    for (var l=0; l<dayModel.count;l++){
+                        maxValue = Math.max(maxValue, dataModel.get(index).dayModel.get(l).day);
                     }
 
-                    x: -(xValue()*40)
-                    antialiasing: true
-//                    y:
-                    id:dayBarRect
-                    width: 2; height: (parent.height/columnNumbers.spacing)* day; color:dayColor
-                    rotation:(day*7)
-                    transformOrigin: Item.Top
-//                    transform: Rotation{
-//                        origin{x: 0; y:dayBarRect.height}
-//                        angle: 45
+                    console.log("max",maxValue)
+                    // Calculate the width and height of the canvas
+                    var canvasWidth = parent.width;
+                    var canvasHeight = parent.height;
 
-//                    }
-                    Text{
-                        anchors.centerIn: parent
-                        text: day
+                    // Calculate the space between each point on the graph
+                    var spacing = canvasWidth / (dayModel.count);
+
+                    // Set up the starting point for drawing the graph
+                    var startX = 0;
+                    var startY = 0 /*canvasHeight - (user1Data[Object.keys(user1Data)[0]] / maxValue) * canvasHeight;*/
+
+                    ctx.strokeStyle = dayModel.get(index).dayColor;
+                    ctx.lineWidth = 2;
+                    ctx.lineTo(0,parent.height);
+                    ctx.stroke();
+                    var dayList=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+                    // Draw the graph and labels
+                    for (var i = 0; i < dayModel.count; i++) {
+//                        var day = dataModel.get(0).Users
+                        var value = dayModel.get(i).day
+
+                        var x = startX + spacing-1;
+                        var y = canvasHeight - (value / maxValue) * canvasHeight+20;
+
+                        // Draw line segment
+                        ctx.lineTo(x, y);
+                        ctx.stroke();
+                        ctx.lineJoin="round"
+                        // Draw label with value at each data point
+                        ctx.font = "10px Arial";
+                        ctx.fillStyle = "white";
+                        ctx.textAlign = "center";
+                        ctx.fillText(value.toString(), x, y - 10);
+//                        ctx.fillRect(x-5, y-5, 10, 10);
+//                        ctx.roundedRect(x-2,y-3,5,5,2,2)
+                        ctx.fillText(dayList[i],x-spacing/1.5,y-10)
+
+                        startX = x;
+                        startY = y;
                     }
+
+                    // Mark the graph as drawn
+                    graphDrawn = true;
                 }
             }
         }
@@ -164,6 +237,11 @@ Window {
 
     }
 
+    Loader{
+        id: loader
+        active: true
+//        sourceComponent:
+    }
 
 
 
@@ -228,40 +306,7 @@ Window {
 
 
             }
-            Rectangle{
-                id: toggleBtn
-                width: 40; height: 20
-                color:"darkred"
-                radius:10
-                anchors {top: parent.top; topMargin: 20; horizontalCenter: parent.horizontalCenter}
-                Rectangle{
-                    width: 20; height: 20; color: "red"; radius:20
-                    NumberAnimation on x {
-                        function whichPage(){
-                            if (listView.delegate==barChartDelegate2){
-                                return toggleBtn.width/2
-                            }
-                            else{
-                                return 0
-                            }
-                        }
-                        id: toggleAnimation
-                        to: whichPage()
-                        easing.type: Easing.InBack
-                        duration: 200; running: false
-                    }
 
-                }
-
-                MouseArea{
-                    id: myMouse
-                    anchors.fill: parent
-                    onClicked: {
-                        toggleAnimation.running = true
-                        listView.delegate==barChartDelegate2 ? listView.delegate=lineChartDelegate : listView.delegate = barChartDelegate2
-                    }
-                }
-            }
         }
 
     }
