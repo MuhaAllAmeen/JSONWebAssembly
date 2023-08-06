@@ -22,7 +22,9 @@ RESOURCES += \
     qml.qrc
 
 DISTFILES += \
+    BarChartDelegate.qml \
     ColorLabels.qml \
+    LineChartDelegate.qml \
     NumbersArea.qml \
     ToggleBtn.qml \
     main.qml

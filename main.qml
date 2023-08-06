@@ -29,6 +29,7 @@ Window {
             i=i+1
             console.log("hours",hours)
             hours= 0
+            console.log("hours here",dataModel.get(0).hours)
         }
         var dayColors = ["red","blue","green","yellow","grey","violet","lightblue"]
         for (var j=0; j<dayColors.length;j++){
@@ -41,157 +42,45 @@ Window {
     }
 
 
-    Item {
-        id: numbersArea
-        width: 30; height: mainArea.height
-        anchors {left:parent.left; right:mainArea.left; verticalCenter: parent.verticalCenter}
+    NumbersArea{id: numbersArea}
+//    Item{
+//            id: numbersArea
+//            width: 30; height: mainArea.height
+//            anchors {left:parent.left; right:mainArea.left; verticalCenter: parent.verticalCenter}
 
-        Rectangle{
-            width: parent.width; height:parent.height;
+//            Rectangle{
+//                width: parent.width; height:parent.height;
 
-            Column{
-                id: columnNumbers
-                height: parent.height
-                anchors.fill: parent
-                spacing:40
-                rotation: 180
-                clip: true
-                Repeater{
-                    model: 15
-                    delegate: Text{
-                        rotation: 180
-                        text: index
-                    }
-                }
-            }
-        }
-    }
-
+//                Column{
+//                    id: columnNumbers
+//                    height: parent.height
+//                    anchors.fill: parent
+//                    spacing:40
+//                    rotation: 180
+//                    clip: true
+//                    Repeater{
+//                        model: 40
+//                        delegate: Text{
+//                            rotation: 180
+//                            text: index
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
 
     Component{
-        id: barChartDelegate2
-        Row{
-            spacing: 10
-            height: parent.height
-            Text{
-                text: model.Users
-                color: "white"
-                anchors.verticalCenter: parent.verticalCenter
-            }
-            Repeater{
-                model: dayModel
-                height: parent.height
-                delegate: Rectangle{
-                    id:dayBarRect
-                    anchors.bottom: parent.bottom
-                    width: 30; height: ((day/columnNumbers.spacing)* parent.height)*3.4 ; color:dayColor
-                    Text{
-                        anchors.centerIn: parent
-                        text: day
-                    }
-                    ParallelAnimation{
-                        running: true
-                        PropertyAnimation {
-                            id: animation;
-                            target: dayBarRect;
-                            property: "height";
-                            from: 0; to: dayBarRect.height
-                            duration: 1000
-                        }
-                        ColorAnimation {
-                            target: dayBarRect
-                            property: "color"
-                            duration: 2000
-                            from: "black"; to: dayColor
-                            easing.type: Easing.InOutQuad
-                        }
-
-                    }
-
-                }
-            }
-        }
+        id: barChartDelegate
+        BarChartDelegate{}
 
     }
+
     ToggleBtn{}
 
     Component{
         id:lineChartDelegate
-        Rectangle {
-            height: 600; width:600
-            anchors{bottom: parent.bottom;}
-            color: "transparent"
-
-            Text{
-                anchors {top:parent.top; topMargin: 20; horizontalCenter: parent.horizontalCenter }
-                text: Users
-                color: "white"
-            }
-            Canvas {
-                id: graphCanvas
-                height: parent.height; width:parent.width
-
-                property bool graphDrawn: false
-
-                onPaint: {drawGraph()}
-
-
-                function drawGraph() {
-                    var ctx = getContext("2d");
-                    var maxValue = 0;
-
-
-                    for (var l=0; l<dayModel.count;l++){
-                        maxValue = Math.max(maxValue, dataModel.get(index).dayModel.get(l).day);
-                    }
-
-                    console.log("max",maxValue)
-                    // Calculate the width and height of the canvas
-                    var canvasWidth = parent.width;
-                    var canvasHeight = parent.height;
-
-                    // Calculate the space between each point on the graph
-                    var spacing = canvasWidth / (dayModel.count);
-
-                    // Set up the starting point for drawing the graph
-                    var startX = 0;
-                    var startY = 0
-
-                    ctx.strokeStyle = dayModel.get(index).dayColor;
-                    ctx.lineWidth = 2;
-                    ctx.lineTo(0,parent.height);
-                    ctx.stroke();
-                    var dayList=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
-                    // Draw the graph and labels
-                    for (var i = 0; i < dayModel.count; i++) {
-                        var value = dayModel.get(i).day
-
-                        var x = startX + spacing-1;
-                        var y = (canvasHeight - (value / maxValue) * canvasHeight)+20;
-
-                        // Draw line segment
-                        ctx.lineTo(x, y);
-                        ctx.stroke();
-                        ctx.lineJoin="round"
-                        // Draw label with value at each data point
-                        ctx.font = "10px Arial";
-                        ctx.fillStyle = "white";
-                        ctx.textAlign = "center";
-                        ctx.fillText(value.toString(), x, y - 10);
-                        //                        ctx.fillRect(x-5, y-5, 10, 10);
-                        //                        ctx.roundedRect(x-2,y-3,5,5,2,2)
-                        ctx.fillText(dayList[i],x-spacing/1.5,y-10)
-
-                        startX = x;
-                        startY = y;
-                    }
-
-                    // Mark the graph as drawn
-                    graphDrawn = true;
-                }
-            }
-        }
+        LineChartDelegate{}
 
     }
 
@@ -199,6 +88,7 @@ Window {
         id:sampleModel
 
     }
+
 
 
 
@@ -265,7 +155,7 @@ Window {
                     console.log("currentItem",listView.currentItem)
                 }
 
-                delegate: barChartDelegate2
+                delegate: barChartDelegate
 
 
             }

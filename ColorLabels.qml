@@ -1,7 +1,7 @@
 import QtQuick
 
 Row{
-    visible: listView.delegate==barChartDelegate2
+    visible: listView.delegate==barChartDelegate
     spacing: (7/70)*parent.width
     width: parent.width; height:parent.height;
     anchors{top: mainAreaRect.bottom; topMargin:5; horizontalCenter: parent.horizontalCenter}

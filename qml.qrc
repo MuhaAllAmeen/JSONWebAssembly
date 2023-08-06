@@ -4,5 +4,7 @@
         <file>ToggleBtn.qml</file>
         <file>NumbersArea.qml</file>
         <file>ColorLabels.qml</file>
+        <file>BarChartDelegate.qml</file>
+        <file>LineChartDelegate.qml</file>
     </qresource>
 </RCC>

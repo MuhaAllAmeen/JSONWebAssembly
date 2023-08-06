@@ -9,7 +9,7 @@ Rectangle{
         width: 20; height: 20; color: "red"; radius:20
         NumberAnimation on x {
             function whichPage(){
-                if (listView.delegate===barChartDelegate2){
+                if (listView.delegate===barChartDelegate){
                     return toggleBtn.width/2
                 }
                 else{
@@ -27,7 +27,7 @@ Rectangle{
         anchors.fill: parent
         onClicked: {
             toggleAnimation.running = true
-            listView.delegate===barChartDelegate2 ? listView.delegate=lineChartDelegate : listView.delegate = barChartDelegate2
+            listView.delegate===barChartDelegate ? listView.delegate=lineChartDelegate : listView.delegate = barChartDelegate
 
         }
     }
