@@ -1,7 +1,7 @@
 import QtQuick
 Row {
             spacing: 10
-            height: parent.height
+            height: listView.height
             Text{
                 text: model.Users
                 color: "white"

@@ -6,5 +6,6 @@
         <file>ColorLabels.qml</file>
         <file>BarChartDelegate.qml</file>
         <file>LineChartDelegate.qml</file>
+        <file>UserSelect.qml</file>
     </qresource>
 </RCC>

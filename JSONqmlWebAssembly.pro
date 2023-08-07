@@ -27,4 +27,5 @@ DISTFILES += \
     LineChartDelegate.qml \
     NumbersArea.qml \
     ToggleBtn.qml \
+    UserSelect.qml \
     main.qml

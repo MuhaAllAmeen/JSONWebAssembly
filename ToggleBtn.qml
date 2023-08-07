@@ -27,6 +27,7 @@ Rectangle{
         anchors.fill: parent
         onClicked: {
             toggleAnimation.running = true
+            listView.currentIndex = 0
             listView.delegate===barChartDelegate ? listView.delegate=lineChartDelegate : listView.delegate = barChartDelegate
 
         }

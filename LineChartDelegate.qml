@@ -2,8 +2,8 @@ import QtQuick
 
 Rectangle{
             height: 600; width:600
-            anchors{bottom: parent.bottom;}
             color: "transparent"
+            anchors{bottom: parent.bottom;}
 
             Text{
                 anchors {top:parent.top; topMargin: 20; horizontalCenter: parent.horizontalCenter }
